@@ -2,7 +2,14 @@
 
 namespace Database\Seeders;
 
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Booking;
+use App\Models\Service;
 use Illuminate\Database\Seeder;
+use Database\Seeders\BarberSeeder;
+use Database\Seeders\BookingSeeder;
+use Database\Seeders\ServicesSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +20,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+      $this->call(RoleSeeder::class);
+      $this->call(UserSeeder::class);
+      $this->call(ServicesSeeder::class);
+      $this->call(BarberSeeder::class);
+      $this->call(BookingSeeder::class);
     }
 }
