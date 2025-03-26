@@ -15,6 +15,6 @@ class Barber extends Model
 
     public function services()
     {
-        return $this->belongsToMany(Service::class)->withTimestamps();
+        return $this->belongsToMany(Services::class)->withTimestamps();
     }
 }
