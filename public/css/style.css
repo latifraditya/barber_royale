@@ -1,0 +1,7 @@
+
+    .service-image {
+        width: 100%;         /* Make image take full width of the card */
+        height: 250px;       /* Set a fixed height */
+        object-fit: cover;   /* Ensure the image scales and covers the area */
+    }
+
