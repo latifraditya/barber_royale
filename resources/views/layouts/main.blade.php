@@ -19,6 +19,8 @@
 
     {{-- My Style --}}
     <link rel="stylesheet" href="/css/style.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
     
 
     <title> Barber Royale</title>
@@ -30,9 +32,31 @@
 <div class="container mt-4">
     @yield('container')
 </div>
-
+ <!-- Footer -->
+ <footer class="bg-dark text-white mt-5">
+  <div class="container-fluid py-4 px-5">
+      <div class="row text-center text-md-start">
+          <div class="col-md-4 mb-3">
+              <h5><i class="bi bi-geo-alt-fill"></i> Alamat</h5>
+              <p>Jl. Raya Panglima Polim No. 25, Jakarta Selatan, Indonesia</p>
+          </div>
+          <div class="col-md-4 mb-3">
+              <h5><i class="bi bi-clock-fill"></i> Jam Buka</h5>
+              <p>Senin - Jumat: 10.00 - 20.00<br>Sabtu - Minggu: 09.00 - 22.00</p>
+          </div>
+          <div class="col-md-4 mb-3">
+              <h5><i class="bi bi-c-circle"></i> Hak Cipta</h5>
+              <p>&copy; {{ date('Y') }} Barber Royale. All rights reserved.</p>
+          </div>
+      </div>
+  </div>
+</footer>
   {{-- JS Script --}}
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init();
+  </script>
+  
 </body>
 </html>
