@@ -18,15 +18,36 @@ class PaymentController extends Controller
   }
 
   // Menyelesaikan pembayaran dan mengubah status booking menjadi Selesai
-  public function complete(Booking $booking)
+  public function complete(Request $request, Booking $booking)
   {
-      // Pastikan booking statusnya Ongoing
+      $request->validate([
+          'payment_method' => 'required|string',
+      ]);
+
       if ($booking->status === 'Ongoing') {
+
+          // Hitung total harga layanan dan menu
+          $servicePrice = optional($booking->service)->price ?? 0;
+          $menuPrice = optional($booking->menu)->price ?? 0;
+          $total = $servicePrice + $menuPrice;
+
+          // Update data booking
           $booking->status = 'Selesai';
+          $booking->payment_method = $request->payment_method;
+          $booking->payment_amount = $total;
           $booking->save();
       }
+      dd([
+        'service' => $booking->service,
+        'menu' => $booking->menu,
+        'service_price' => optional($booking->service)->price,
+        'menu_price' => optional($booking->menu)->price,
+        'total' => $total,
+    ]);
+    
 
-      // Redirect kembali ke halaman daftar booking
       return redirect()->route('bookings.history')->with('success', 'Pembayaran selesai, booking berhasil diselesaikan.');
   }
+
+
 }
