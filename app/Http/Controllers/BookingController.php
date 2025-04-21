@@ -7,8 +7,11 @@ use App\Models\User;
 use App\Models\Barber;
 use App\Models\Booking;
 use App\Models\Services;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
+use App\Models\TransactionDetail;
 use Illuminate\Support\Facades\Log;
+use App\Services\TransactionService;
 use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
@@ -69,9 +72,6 @@ class BookingController extends Controller
              'menu_id' => 'nullable|exists:menus,id', // Pastikan menu_id valid jika dipilih
          ]);
      
-         // Debug: Periksa apakah menu_id ada di request
-         Log::info('Received menu_id:', ['menu_id' => $request->menu_id]);
-     
          // Simpan booking
          $booking = new Booking([
              'booking_date' => $request->date,
@@ -84,13 +84,62 @@ class BookingController extends Controller
          // Set user_id
          $booking->user_id = $user->id;
          $booking->save();
+
+         $transaction = $this->storeTransaction($booking);  // Menyimpan transaksi
+         $this->storeTransactionDetails($transaction, $booking);
+
      
          return redirect()->route('bookings.index')->with('message', 'Booking created successfully');
      }
      
-
+     public function storeTransaction(Booking $booking)
+     {
+         // Hitung total sebelum pajak, pajak, dan total setelah pajak
+         $totalBeforeTax = $booking->service->price + ($booking->menu ? $booking->menu->price : 0);
+         $taxPercent = 0.1; // Contoh pajak 10%
+         $taxAmount = $totalBeforeTax * $taxPercent;
+         $totalAfterTax = $totalBeforeTax + $taxAmount;
      
-    
+         // Simpan transaksi utama dengan memasukkan nilai untuk kolom tax_percent
+         $transaction = Transaction::create([
+             'booking_id' => $booking->id,
+             'total_before_tax' => $totalBeforeTax,
+             'tax_percent' => $taxPercent * 100,  // Pastikan tax_percent dalam bentuk persen (misal 10%)
+             'total_after_tax' => $totalAfterTax,
+         ]);
+     
+         // Log untuk memastikan transaksi sudah disimpan
+        //  Log::info('Transaction saved:', [
+        //      'transaction_id' => $transaction->id,
+        //  ]);
+     
+         return $transaction;
+     }
+     
+
+    public function storeTransactionDetails(Transaction $transaction, Booking $booking)
+{
+    // Simpan detail transaksi untuk layanan
+    $transactionDetailService = TransactionDetail::create([
+        'transaction_id' => $transaction->id,
+        'item_type' => 'service',
+        'item_id' => $booking->service->id,
+        'item_name' => $booking->service->name,
+        'item_price' => $booking->service->price,
+    ]);
+
+    // Jika ada menu, simpan detail transaksi untuk menu
+    if ($booking->menu) {
+        $transactionDetailMenu = TransactionDetail::create([
+            'transaction_id' => $transaction->id,
+            'item_type' => 'menu',
+            'item_id' => $booking->menu->id,
+            'item_name' => $booking->menu->name,
+            'item_price' => $booking->menu->price,
+        ]);
+    }
+}
+
 
     /**
      * Display the specified resource.
@@ -100,17 +149,7 @@ class BookingController extends Controller
      */
     public function show(Request $request, Booking $booking)
     {
-        $customer = User::where('phone', $request->phone)->first();
-
-        if (!$customer) {
-            return redirect()->route('bookings.index')->with('message', 'Customer not found.');
-        }
-
-        if ($customer->id === $booking->customer_id) {
-            return view('bookings.show')->with('booking', $booking);
-        } else {
-            return redirect()->route('bookings.index')->with('message', 'You do not have access to this booking.');
-        }
+        
     }
 
 
@@ -151,11 +190,11 @@ class BookingController extends Controller
     public function history(Request $request)
     {
         $bookings = Booking::with(['barber', 'service', 'menu'])
-        ->orderBy('booking_date', 'desc')
+        ->orderBy('id', 'desc')
         ->get();
 
         $query = Booking::with(['barber', 'service', 'menu'])  // Include 'barber', 'service', 'menu' relations
-                        ->orderBy('booking_date', 'desc');  // Sort by booking date (latest first)
+                        ->orderBy('id', 'desc');  // Sort by booking date (latest first)
 
         // If a status is provided, filter by that status
         if ($request->filled('status')) {

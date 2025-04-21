@@ -8,21 +8,31 @@ class PaymentController extends Controller
 {
   public function show(Booking $booking)
   {
-      // Pastikan booking statusnya Ongoing
       if ($booking->status !== 'Ongoing') {
           return redirect()->route('bookings.index')->with('error', 'Booking tidak valid untuk pembayaran.');
       }
 
-      // Tampilkan halaman pembayaran
-      return view('payment.show', compact('booking'));
+      // Ambil relasi transaksi dan detail
+      $booking->load(['barber', 'transaction.details']);
+
+      // Pastikan transaksi tersedia
+      $transaction = $booking->transaction;
+      if (!$transaction) {
+          return redirect()->route('bookings.index')->with('error', 'Transaksi tidak ditemukan.');
+      }
+
+      $transactionDetails = $transaction->details;
+
+      return view('payment.show', compact('booking', 'transaction', 'transactionDetails'));
   }
+
 
   // Menyelesaikan pembayaran dan mengubah status booking menjadi Selesai
   public function complete(Request $request, Booking $booking)
   {
-      $request->validate([
-          'payment_method' => 'required|string',
-      ]);
+      // $request->validate([
+      //     'payment_method' => 'required|string',
+      // ]);
 
       if ($booking->status === 'Ongoing') {
 
@@ -33,21 +43,32 @@ class PaymentController extends Controller
 
           // Update data booking
           $booking->status = 'Selesai';
-          $booking->payment_method = $request->payment_method;
           $booking->payment_amount = $total;
           $booking->save();
       }
-      dd([
-        'service' => $booking->service,
-        'menu' => $booking->menu,
-        'service_price' => optional($booking->service)->price,
-        'menu_price' => optional($booking->menu)->price,
-        'total' => $total,
-    ]);
     
 
       return redirect()->route('bookings.history')->with('success', 'Pembayaran selesai, booking berhasil diselesaikan.');
   }
+
+  public function receipt(Booking $booking)
+  {
+      if ($booking->status !== 'Selesai') {
+          return redirect()->route('bookings.history')->with('error', 'Struk hanya tersedia untuk booking yang sudah selesai.');
+      }
+
+      $booking->load(['barber', 'transaction.details']);
+      $transaction = $booking->transaction;
+
+      if (!$transaction) {
+          return redirect()->route('bookings.history')->with('error', 'Transaksi tidak ditemukan.');
+      }
+
+      $transactionDetails = $transaction->details;
+
+      return view('payment.receipt', compact('booking', 'transaction', 'transactionDetails'));
+  }
+
 
 
 }
