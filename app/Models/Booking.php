@@ -18,6 +18,8 @@ class Booking extends Model
         'barber_id',
         'services_id',
         'user_id',
+        'menu_id',
+        'payment_amount',
         
     ];
 
@@ -34,5 +36,16 @@ class Booking extends Model
     public function service()
     {
         return $this->belongsTo(Services::class, 'services_id');
+    }
+
+    public function menu()
+    {
+        return $this->belongsTo(Menu::class, 'menu_id');
+    }
+
+
+    public function transaction()
+    {
+        return $this->hasOne(Transaction::class);
     }
 }
