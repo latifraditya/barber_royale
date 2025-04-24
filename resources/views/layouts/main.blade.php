@@ -29,6 +29,10 @@
 
     @include('partials.navbar')
    
+{{-- Hero Section langsung di layout --}}
+@yield('hero')
+
+{{-- Semua section lainnya masuk container --}}
 <div class="container mt-4">
     @yield('container')
 </div>
