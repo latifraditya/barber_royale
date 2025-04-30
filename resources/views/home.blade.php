@@ -1,15 +1,23 @@
 @extends('layouts.main')
 
-@section('container')
 
-<!-- Hero Section -->
-<section class="min-vh-100 d-flex align-items-center text-white" style="background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)), url('/img/barbershop.jpg') center/cover no-repeat;">
-    <div class="container text-center">
-        <h1 class="display-3 fw-bold mb-3" data-aos="fade-down">Barber Royale</h1>
-        <p class="lead" data-aos="fade-up" data-aos-delay="200">Pengalaman potong rambut terbaik untuk pria modern.</p>
-        <a href="/bookings" class="btn btn-primary btn-lg mt-3" data-aos="zoom-in" data-aos-delay="400">Booking Sekarang</a>
-    </div>
-</section>
+@section('hero')
+    <!-- Full Width Hero Section -->
+    <section class="vh-100 w-100 position-relative overflow-hidden m-0 p-0" 
+        style="background: url('/img/barbershop.jpg') center center / cover no-repeat;">
+
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(0,0,0,0.6); z-index: 1;"></div>
+
+        <div class="container-fluid h-100 position-relative z-2 d-flex flex-column justify-content-center align-items-center text-white text-center px-0">
+            <h1 class="display-3 fw-bold mb-3" data-aos="fade-down">Barber Royale</h1>
+            <p class="lead" data-aos="fade-up" data-aos-delay="200">Pengalaman potong rambut terbaik untuk pria modern.</p>
+            <a href="/bookings" class="btn btn-primary btn-lg mt-3" data-aos="zoom-in" data-aos-delay="400">Booking Sekarang</a>
+        </div>
+    </section>
+@endsection
+
+
+@section('container')
 
 <!-- Services Section -->
 <section class="py-5 bg-light">
