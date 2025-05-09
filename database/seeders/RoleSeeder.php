@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class RoleSeeder extends Seeder
@@ -15,14 +15,13 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        $role_admin = new Role();
-        $role_admin->name = 'admin';
-        $role_admin->description = "An Administrator user";
-        $role_admin->save();
-
-        $role_user = new Role();
-        $role_user->name = 'user';
-        $role_user->description = 'An Ordinary user';
-        $role_user->save();
+        Role::updateOrcreate(['name' => 'admin']);
+        Role::updateOrcreate(['name' => 'user']);
+        Role::updateOrcreate(['name' => 'barber']);
+        Role::updateOrcreate(['name' => 'superadmin']);
+        Role::updateOrcreate(['name' => 'manager']);
+        Role::updateOrcreate(['name' => 'staff']);
+        Role::updateOrcreate(['name' => 'customer']);
+        Role::updateOrcreate(['name' => 'guest']);       
     }
 }

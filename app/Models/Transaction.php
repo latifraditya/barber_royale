@@ -16,7 +16,7 @@ class Transaction extends Model
       'total_after_tax',
     ];
     
-    public function details()
+    public function transactionDetails()
     {
         return $this->hasMany(TransactionDetail::class);
     }
