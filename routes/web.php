@@ -1,17 +1,18 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Admin\ServicesController;
-use App\Http\Controllers\Admin\BarberController as AdminBarberController;
-use App\Http\Controllers\User\ServicesController as UserServicesController;
-use App\Http\Controllers\User\BarberController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\User\BookingController as UserBookingController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\User\BarberController;
+use App\Http\Controllers\Admin\ServicesController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminUserBookingController;
+use App\Http\Controllers\Admin\BarberController as AdminBarberController;
+use App\Http\Controllers\User\BookingController as UserBookingController;
+use App\Http\Controllers\User\ServicesController as UserServicesController;
 
 
 /*
@@ -104,10 +105,23 @@ Route::get('barber/{barber}', [BarberController::class, 'show'])->name('user.bar
 
 Route::get('payment/{booking}', [PaymentController::class, 'show'])->name('payment.show');
 Route::post('payment/{booking}/complete', [PaymentController::class, 'complete'])->name('payment.complete');
+Route::get('payment/{booking}/receipt', [PaymentController::class, 'receipt'])->name('payment.receipt');
+
 
 
 // Admin Dashboard
 
 Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-    ->middleware('auth')
+    ->middleware('admin')
     ->name('dashboard');
+    // Route::get('/dashboard/users', [AdminDashboardController::class, 'userBookings'])->name('admin.users.index');
+
+    Route::get('/admin/users/{user}/index', [AdminUserBookingController::class, 'show'])
+    ->name('admin.users.index');
+
+
+Route::get('/admin/dashboard/bookings/{booking}', [AdminUserBookingController::class, 'detail'])->name('admin.users.detail');
+
+use App\Http\Controllers\TransactionController;
+
+Route::get('/admin/transactions/index', [TransactionController::class, 'index'])->name('admin.transactions.index');
